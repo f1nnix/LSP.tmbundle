@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/local/bin/python3
+import os
+import sys
+import socket
+import json
+import re
+
+DIALOG = os.environ.get('DIALOG')
+
+sys.path.append(os.environ['TM_BUNDLE_SUPPORT'])
+
+from proxy.events import ProxyEvent
+
+CURRENT_LINE = os.getenv('TM_LINE_NUMBER')
+CURRENT_INDEX = os.getenv('TM_LINE_INDEX')
+CURRENT_FILE = os.getenv('TM_FILEPATH')
+CURRENT_WORD = os.getenv('TM_CURRENT_WORD')
+
+HOST = '127.0.0.1'  # The server's hostname or IP address
+PORT = 65432        # The port used by the server
+
+message = {
+    'type': ProxyEvent.COMPLETE,
+    'params': {
+        'line': int(CURRENT_LINE)-1,
+        'index': int(CURRENT_INDEX),
+        'file': CURRENT_FILE, 
+    },
+}
+payload = json.dumps(message)
+payload = payload.encode('utf-8')
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((HOST, PORT))
+    s.sendall(payload)
+    data = s.recv(8192)
+    
+try:
+    completions = json.loads(data)
+except:
+    print(data)
+    sys.exit()
+
+
+if not completions:
+    print(completions)
+    sys.exit()
+
+items = [
+    '{display = "%s";}' % c
+    for c in completions
+]
+items = "(" +  ', '.join(items) + ")"
+
+cmd = "{} popup --alreadyTyped '{}' --suggestions '{}'" \
+    .format(
+        DIALOG,
+        CURRENT_WORD,
+        items,)
+    
+res = os.popen(cmd).read()
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>^ </string>
+	<key>name</key>
+	<string>Complete</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>atCaret</string>
+	<key>scope</key>
+	<string>source.python</string>
+	<key>uuid</key>
+	<string>91150A2C-EF40-49B0-B5F4-6AB649CC07EC</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>

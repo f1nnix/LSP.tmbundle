@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>contactEmailRot13</key>
+	<string>vyln@ehfnara.pb.hx</string>
+	<key>contactName</key>
+	<string>Ilya Rusanen</string>
+	<key>description</key>
+	<string>Basic LSP client implementation for TextMate 2.0. WIP
+
+</string>
+	<key>name</key>
+	<string>LSP</string>
+	<key>uuid</key>
+	<string>047D62E5-0A59-4BB6-8399-FE2644130889</string>
+</dict>
+</plist>
